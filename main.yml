@@ -1,0 +1,14 @@
+---
+- name: Run Playbook
+  hosts: all
+  tasks:
+    - name: Install
+      include_tasks: tasks/install.yml
+
+    - name: Configure
+      include_tasks: tasks/config_dnf.yml
+      when: ansible_os_family in ["RedHat", "Suse"]
+    
+    - name: Configure
+      include_tasks: tasks/config_apt.yml
+      when: ansible_os_family in ["Debian"]

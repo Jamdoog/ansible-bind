@@ -1,0 +1,16 @@
+---
+- name: Create Package List (APT)
+  set_fact:
+    BIND_PACKAGE: "['bind9', 'bind9utils', 'dnsutils']"
+  when: ansible_os_family in ["Debian"]
+
+- name: Create Package List (DNF/Zypper)
+  set_fact: 
+    BIND_PACKAGE: "['bind', 'bind-utils']"
+  when: ansible_os_family in ["RedHat", "Suse"]
+
+- name: Install Bind Packages
+  package:
+    state: present
+    name: "{{ item }}"
+  loop: "{{ BIND_PACKAGE }}"

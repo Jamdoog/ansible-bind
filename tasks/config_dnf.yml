@@ -1,0 +1,48 @@
+- name: Set Bind Group Variable (DNF/Zypper)
+  set_fact: BIND_GROUP="named"
+
+- name: Deploy Bind Main Template (DNF/Zypper)
+  template:
+    src: named.conf
+    dest: /etc/named.conf
+    owner: root
+    group: named
+    mode: 0770
+
+- name: Check If Named Folder Exists 
+  stat:
+    path: /var/named
+  register: varnamed
+
+- name: Create /var/named Folder
+  file:
+    state: directory
+    path: /var/named
+    owner: "{{ BIND_GROUP }}"
+    group: "{{ BIND_GROUP }}"
+    mode: 0770
+    recurse: yes
+  when: varnamed.stat.exists == false
+
+- name: Check If /var/named/zones Folder Exists 
+  stat:
+    path: /var/named/zones
+  register: varnamedzones
+
+- name: Create /var/named Folder
+  file:
+    state: directory
+    path: /var/named/zones
+    owner: "{{ BIND_GROUP }}"
+    group: "{{ BIND_GROUP }}"
+    mode: 0770
+    recurse: yes
+  when: varnamedzones.stat.exists == false
+
+- name: Deploy Zone Files (DNF/Zypper)
+  copy:
+    src: ./zones/
+    dest: /var/named/zones/
+    owner: root
+    group: "{{ BIND_GROUP }}"
+  notify: restart_named_dnf

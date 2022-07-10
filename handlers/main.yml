@@ -1,0 +1,11 @@
+- name: restart_named_apt
+  service:
+    name: bind9
+    state: restarted
+    enabled: yes
+
+- name: restart_named_dnf
+  service:
+    name: named
+    state: restarted
+    enabled: yes

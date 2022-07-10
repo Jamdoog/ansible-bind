@@ -1,0 +1,41 @@
+---
+- name: Set Bind Group Variable (APT)
+  set_fact: BIND_GROUP="bind"
+
+- name: Deploy Bind Main Template (APT)
+  template:
+    src: named.conf
+    dest: /etc/bind/named.conf
+    owner: root
+    group: "{{ BIND_GROUP }}"
+    mode: 0640
+
+- name: Check if zones folder exists 
+  stat:
+    path: /etc/bind/zones
+  register: zones
+
+- name: Create /etc/bind/zones Folder
+  file:
+    state: directory
+    path: /etc/bind/zones
+    owner: root
+    group: "{{ BIND_GROUP }}"
+    mode: 0644
+    recurse: yes
+  when: zones.stat.exists == false
+
+- name: Deploy Zone Files (APT)
+  copy:
+    src: ./zones/
+    dest: /var/lib/bind/
+    owner: root
+    group: "{{ BIND_GROUP }}"
+    mode: 0644
+
+- name: Change Zones Directory (APT)
+  lineinfile:
+    regexp: '^	directory "/var/named/zones/";'
+    line: '	directory "/var/lib/bind/";'
+    path: /etc/bind/named.conf
+  notify: restart_named_apt
