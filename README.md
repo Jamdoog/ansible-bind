@@ -1,4 +1,4 @@
-Ansible Role: Telegraf
+Ansible Role: BIND
 =========
 
 Installs BIND on RHEL/CentOS, Debian/Ubuntu & OpenSUSE Servers
