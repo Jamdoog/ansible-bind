@@ -9,6 +9,7 @@
     owner: root
     group: "{{ BIND_GROUP }}"
     mode: 0640
+  notify: restart_named_apt
 
 - name: Check if zones folder exists 
   stat:
@@ -32,6 +33,7 @@
     owner: root
     group: "{{ BIND_GROUP }}"
     mode: 0644
+  notify: restart_named_apt
 
 - name: Change Zones Directory (APT)
   lineinfile:
